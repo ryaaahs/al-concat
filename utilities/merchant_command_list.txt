@@ -1,0 +1,26 @@
+MERCH COMMAND LIST
+upgrade_cycle_compound()
+upgrade_cycle_upgrade()
+
+get_item_from_bank(item_name, level)
+clear_inventory_to_bank()
+get_item_from_bank("candycanesword")
+bank_upgrade()
+
+combine_bank_items()
+
+compress_secondhands()
+sell_inventory()
+item_exchange("mistletoe")
+item_exchange("armorbox")
+item_exchange("xbox")
+
+await smart_move({x: 56, y: -128, map: "winter_inn"})
+await item_exchange("mistletoe")
+await smart_move(upgrade_location)
+upgrade_cycle_compound()
+upgrade_cycle_upgrade()
+
+// Compare apierce
+Change target armor
+show_json(character.attack * damage_multiplier(targetArmor - character.apiercing) * (1 + (character.crit/100) * (character.critdamage/100)) * character.frequency);
