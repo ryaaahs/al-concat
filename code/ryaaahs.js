@@ -20,7 +20,7 @@ const farming_locations = {
 }
 const hunting_lists = {
     "main_three_farm": ["spider", "bigbird", "scorpion"],	
-	"franky": ["franky", "nerfedmummy", "oneeye"],
+	"franky": ["franky", "nerfedmummy"],
     "goo_brawl": ["bgoo", "rgoo"]
 }
 
