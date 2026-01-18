@@ -81,7 +81,7 @@ async function weapon_swap() {
         offhand = "ololipop";
         let item_search = character.items.map((item, index) => ({item, index}))
             .filter((pair) => pair.item?.name === mainhand)
-            .map(pair => pair.id);
+            .map((pair) => pair.index);
 
         // We have two ololipop
         mainhand_index = item_search[0];
@@ -105,9 +105,11 @@ async function weapon_swap() {
         await equip(offhand_index, "offhand")
     } else if (character.slots.offhand?.name != offhand) {
         await unequip("offhand");
-        await equip(offhand, "offhand")
+        await equip(offhand_index, "offhand")
     }
 }
+// Swap weapons on first load to the proper set
+weapon_swap();
 
 // Intervals ------------------------------------------------------------------
 
@@ -249,7 +251,7 @@ async function handle_stomp() {
         console.log("STOMPING error: ", e);
     }
 }
-//setInterval(handle_stomp, 100);
+setInterval(handle_stomp, 100);
 
 async function handle_cleave() {
     if (skill_lock) return;
