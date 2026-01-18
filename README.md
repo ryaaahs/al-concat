@@ -9,7 +9,7 @@ Download or clone repository
 
 ```bash
   cd al-clone
-  npm install al-concat // To pull dot-env
+  npm install // To pull dot-env
 ```
 ## Usage   
 Folders and Files  
