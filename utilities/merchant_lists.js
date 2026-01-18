@@ -16,9 +16,9 @@ const bank_whitelist_items = [
     // "candy0",
     // "candy1",
     // "seashell",
-    // "ornament",
+    "ornament",
     "mistletoe",
-    // "candycane",
+    "candycane",
     // "armorbox",
     // "weaponbox",
     // "xbox"
@@ -43,8 +43,8 @@ const crafting_items = {
 
 const upgrade_items = [
     // TEMP
-    //"mshield",
-    "basher",
+    "mshield",
+    //"basher",
     // "rapier",
     // "broom",
     //"wbookhs",
@@ -75,6 +75,7 @@ const upgrade_items = [
     "t2quiver",
 
     // Gloves
+    //"supermittens",
 
     // Cape
     "angelwings",
@@ -587,7 +588,7 @@ const whitelist_items = [
   "confetti",
   "firecrackers",
   // "smoke",
-  "snowball",
+  //"snowball",
   "figurine",
   "pvptoken",
   "funtoken",

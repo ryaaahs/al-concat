@@ -293,12 +293,12 @@ let core_merch = setInterval(async () => {
             } else if (merch_state_machine === "exchange_ornament") {
 
                 merch_state_machine = "move_ornament";
-                await smart_move(jayson_location);
+                await smart_move(xyn_location);
                 await item_exchange("ornament");
             } else if (merch_state_machine === "exchange_candycane") {
 
                 merch_state_machine = "move_candycane";
-                await smart_move(santa_location);
+                await smart_move(xyn_location);
                 await item_exchange("candycane");
             } else if (merch_state_machine === "exchange_xbox" ||
                 merch_state_machine === "exchange_raw_emerald" ||

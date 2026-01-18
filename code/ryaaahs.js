@@ -1,7 +1,7 @@
 const merchant = "merchire";
 const party_owner = merchant;
 const party_target = ["pbuffme", "altfire", "merchire"];
-const tank = "pbuffme"
+const tank = "pbuffme" //pbuffme
  
 let is_waiting_for_tank = false;
 let is_attacking = true;
@@ -15,10 +15,13 @@ let mainhand = "";
 let offhand = "";
 
 const farming_locations = {
-    "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}
+    "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}, 
+    "franky": {x: 15, y: 38, map: "level2w"}
 }
 const hunting_lists = {
-    "main_three_farm": ["spider", "bigbird", "scorpion"]
+    "main_three_farm": ["spider", "bigbird", "scorpion"],	
+	"franky": ["franky", "nerfedmummy", "oneeye"],
+    "goo_brawl": ["bgoo", "rgoo"]
 }
 
 let farming_key = "main_three_farm";
@@ -246,7 +249,7 @@ async function handle_stomp() {
         console.log("STOMPING error: ", e);
     }
 }
-setInterval(handle_stomp, 100);
+//setInterval(handle_stomp, 100);
 
 async function handle_cleave() {
     if (skill_lock) return;

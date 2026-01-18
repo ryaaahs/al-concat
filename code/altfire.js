@@ -8,7 +8,8 @@ let is_attacking = true;
 let pvp_flag = false;
 
 const farming_locations = {
-    "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}
+    "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}, 
+    "franky": {x: 15, y: 38, map: "level2w"}
 }
 const hunting_lists = {
     "main_three_farm": ["spider", "bigbird", "scorpion"],	
