@@ -147,6 +147,23 @@ setInterval(function(){
 
 }, 1000 * 0.25); // Loops every 1/4 seconds.
 
+async function handle_elixir() {
+    try {
+        if (character.slots?.elixir) return;
+        let elixir_index = locate_item(elixir);
+
+        // Drink the consume x times
+        for (let i = 0; i < 4; i++) {
+            game_log(`Consuming ${elixir}`, "#FFA600");
+            consume(elixir_index)
+        }
+        
+    }  catch (e) {
+        console.log("Consume error: ", e);
+    }
+}
+setInterval(handle_elixir, (1000 * 60) * 5);
+
 // Skills handling
 async function handleAbsorb() {
     try {
