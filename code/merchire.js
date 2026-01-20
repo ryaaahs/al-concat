@@ -567,7 +567,7 @@ async function clear_inventory_to_bank() {
             let item = character.items[i];
             if (item === null) continue;
 
-            if (!bank_whitelist_items.includes(item.name) && whitelist_items.includes(item.name)) {
+            if (!bank_whitelist_items.includes(item.name) && whitelist_items.includes(item.name) || item?.p === "shiny") {
                 await bank_store(i);
             }
         }
@@ -900,7 +900,7 @@ async function sell_inventory() {
     await combine_inventory_items();
 
     for (let index = 0; index < character.items.length; index++) {
-        if (character.items[index] === null || character.items[index]?.l) {
+        if (character.items[index] === null || character.items[index]?.l || character.items[index]?.p === "shiny") {
             continue;
         }
         
