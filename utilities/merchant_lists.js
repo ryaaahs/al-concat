@@ -16,9 +16,9 @@ const bank_whitelist_items = [
     // "candy0",
     // "candy1",
     // "seashell",
-    "ornament",
-    "mistletoe",
-    "candycane",
+    //"ornament",
+    //"mistletoe",
+    //"candycane",
     // "armorbox",
     // "weaponbox",
     // "xbox"

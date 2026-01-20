@@ -755,22 +755,14 @@ async function get_item_from_bank(item_name, level=null) {
             const bank_slot = character.bank[bank_slot_name];
             for (let j = 0; j < bank_slot.length; j++) {
                 let item = bank_slot[j];
-                if (level ===  null) {
-                    if (item && item.name === item_name) {
-                        if (used_slots_length() < inventory_size - 1){
+                if ((item && (item.name === item_name && level === null)) || (item && (item.name === item_name && item.level === level))) {
+                    if (used_slots_length() < inventory_size - 1){
+                        if (character.map != parent.bank_packs[bank_slot_name][0]) {
                             await smart_move(parent.bank_packs[bank_slot_name][0]);
-                            await bank_retrieve(bank_slot_name, j);
                         }
-                    }
-                } else {
-                    if (item && (item.name === item_name && item.level === level)) {
-                        if (used_slots_length() < inventory_size - 1){
-                            await smart_move(parent.bank_packs[bank_slot_name][0]);
-                            await bank_retrieve(bank_slot_name, j);
-                        }
+                        await bank_retrieve(bank_slot_name, j);
                     }
                 }
-                
             }
         }
     }
@@ -784,16 +776,9 @@ function get_item_info_bank(item_name, level=null) {
             const bank_slot = character.bank[bank_slot_name];
             for (let j = 0; j < bank_slot.length; j++) {
                 let item = bank_slot[j];
-                if (level ===  null) {
-                    if (item && item.name === item_name) {
-                        item_info.push({slot_name: bank_slot_name, index: j, item_name: item.name, item_level: item?.level, item_quantity: item?.q});
-                    }
-                } else {
-                    if (item && (item.name === item_name && item.level === level)) {
-                        item_info.push({slot_name: bank_slot_name, index: j, item_name: item.name, item_level: item?.level, item_quantity: item?.q});
-                    }
+                if (item && (item.name === item_name && level === null) || item && (item.name === item_name && item.level === level)) {
+                    item_info.push({slot_name: bank_slot_name, index: j, item_name: item.name, item_level: item?.level, item_quantity: item?.q});
                 }
-                
             }
         }
     }
