@@ -641,13 +641,14 @@ async function bank_upgrade() {
 
 async function combine_inventory_items() {
     for (let i = 0; i < character.items.length; i++) {
-        if (!character.items[i]?.q) continue;
+        if (character.items[i] === null || !character.items[i]?.q) continue;
+
         let item_stack_size = G.items[`${character.items[i].name}`].s; 
         if (character.items[i]?.q === item_stack_size) continue;
 
 
         for (let j = 0; j < character.items.length; j++) {
-            if (j === i) continue;
+            if (character.items[j] === null || j === i) continue;
 
             if (character.items[i].name === character.items[j]?.name) {
                 if (character.items[j]?.q === item_stack_size) continue;
@@ -905,6 +906,7 @@ async function sell_inventory() {
         
         if (whitelist_items.includes(character.items[index].name)) continue;
         if (bank_whitelist_items.includes(character.items[index].name)) continue;
+
         sell(index, character.items[index]?.q)
     } 	
 }
@@ -919,10 +921,6 @@ async function upgrade_cycle_upgrade() {
         
         if (G.items[character.items[index].name].upgrade) {
             // Busy loop to upgrade gear
-            if (!whitelist_items.includes(character.items[index].name)) {
-                sell(index)
-                continue;
-            }
             if (!upgrade_items.includes(character.items[index].name)) continue;
 
             await gear_upgrade(index, max_upgrade_item_level);
@@ -1020,10 +1018,6 @@ async function upgrade_cycle_compound() {
         
         if (G.items[character.items[index].name].compound) {
             // Busy loop to compound gear
-            if (!whitelist_items.includes(character.items[index].name)) {
-                sell(index)
-                continue;
-            }
             if (!upgrade_items.includes(character.items[index].name)) continue;
 
             await gear_compound(index);
