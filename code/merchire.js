@@ -640,6 +640,9 @@ async function bank_upgrade() {
 }
 
 async function combine_inventory_items() {
+    // Inventory is full, cannot combine items
+    if (used_slots_length() === character.items.length) return;
+
     for (let i = 0; i < character.items.length; i++) {
         if (character.items[i] === null || !character.items[i]?.q) continue;
 
