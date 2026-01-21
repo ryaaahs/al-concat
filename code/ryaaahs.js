@@ -117,8 +117,7 @@ const RESPAWN_INTERVAL = 15 * 100;
 setInterval(function () { 
     if (character.rip) { 
         respawn(); 
-        smart_move(farming_location);
-        is_waiting_for_tank = true; 
+        check_farm();
     } 
 }, RESPAWN_INTERVAL);
 
@@ -294,7 +293,7 @@ async function handle_cleave() {
 //setInterval(handle_cleave, 100);
 
 async function handle_agitate() {
-    if (skill_lock || pvp_flag) return;
+    if (skill_lock || pvp_flag || character.party === null) return;
 
     try {
         if (!is_on_cooldown("agitate")) {
