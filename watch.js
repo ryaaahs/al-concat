@@ -9,10 +9,7 @@ let changed_file = "";
 
 let combat_utilities = [
     "utilities/code_cost.js",
-    "utilities/dps_meter.js",
-    "utilities/kill_tracker.js",
-    "utilities/gold_meter.js",
-    "utilities/xp_meter.js"
+    "utilities/metrics_graphs.js",
 ];
 
 const merchant_utilities = [
