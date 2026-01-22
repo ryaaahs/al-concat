@@ -10,7 +10,7 @@ const santa_location = ({x: 1210, y: -1578, map: "winterland"});
 const bank_floor_two = ({x: -264, y: -411, map: "bank_b"});
 const leo_location = {x: 43.5, y: 638, map: character.map};
 
-const max_upgrade_item_level = 6;
+const max_upgrade_item_level = 7;
 const max_upgrade_item_level_list = 8;  
 const max_compound_item_level = 3; 
 const mp_pot_name = "mpot1"
@@ -742,6 +742,10 @@ async function get_item_from_bank(item_name, level=null) {
             const bank_slot = character.bank[bank_slot_name];
             for (let j = 0; j < bank_slot.length; j++) {
                 let item = bank_slot[j];
+
+                // Skip shiny
+                if (item?.p === "shiny") continue;
+
                 if ((item && (item.name === item_name && level === null)) || (item && (item.name === item_name && item.level === level))) {
                     if (used_slots_length() < inventory_size - 1){
                         if (character.map != parent.bank_packs[bank_slot_name][0]) {
@@ -763,6 +767,10 @@ function get_item_info_bank(item_name, level=null) {
             const bank_slot = character.bank[bank_slot_name];
             for (let j = 0; j < bank_slot.length; j++) {
                 let item = bank_slot[j];
+
+                // Skip shiny
+                if (item?.p === "shiny") continue; 
+
                 if (item && (item.name === item_name && level === null) || item && (item.name === item_name && item.level === level)) {
                     item_info.push({slot_name: bank_slot_name, index: j, item_name: item.name, item_level: item?.level, item_quantity: item?.q});
                 }
@@ -911,6 +919,9 @@ async function upgrade_cycle_upgrade() {
         if (character.items[index] === null || character.items[index].level === undefined) {
             continue;
         }
+
+        // Skip shiny
+        if (character.items[index]?.p === "shiny") continue;
         
         if (G.items[character.items[index].name].upgrade) {
             // Busy loop to upgrade gear
@@ -1008,6 +1019,9 @@ async function upgrade_cycle_compound() {
         if (character.items[index] === null || character.items[index].level === undefined) {
             continue;
         }
+
+        // Skip shiny
+        if (character.items[index]?.p === "shiny") continue;
         
         if (G.items[character.items[index].name].compound) {
             // Busy loop to compound gear
@@ -1038,6 +1052,9 @@ async function gear_compound(item_index) {
             if (character.items[index] === null || character.items[index].level === undefined) {
                 continue;
             }
+
+             // Skip shiny
+            if (item?.p === "shiny") continue;
 
             if (index === item_index) continue;
 

@@ -74,6 +74,12 @@ const upgrade_items = [
     // Offhand
     "t2quiver",
 
+    // Helmet
+    "wcap",
+
+    // Chest
+    "wattire",
+
     // Gloves
     //"supermittens",
 
@@ -83,9 +89,11 @@ const upgrade_items = [
 
     // Pants
     "pants",
+    "wbreeches",
 
     // Boots
     "wingedboots",
+    "wshoes",
 
     // Weapons
     "firebow",
@@ -159,7 +167,7 @@ const whitelist_items = [
   //"rednose",
   //"helmet",
   "cyber",
-  //"wcap",
+  "wcap",
   //"xmashat",
   "ghatb",
   "ghatp",
@@ -193,7 +201,7 @@ const whitelist_items = [
   "tshirt8",
   "tshirt9",
   //"coat",
-  //"wattire",
+  "wattire",
   //"xmassweater",
   //"sweaterhs",
   //"coat1",
@@ -214,7 +222,7 @@ const whitelist_items = [
   //"epyjamas",
   "pants",
   "fallen",
-  //"wbreeches",
+  "wbreeches",
   //"xmaspants",
   //"pants1",
   "mwpants",
@@ -230,7 +238,7 @@ const whitelist_items = [
 
   // Shoes
   //"shoes",
-  //"wshoes",
+  "wshoes",
   //"iceskates",
   //"snowboots",
   //"eslippers",
