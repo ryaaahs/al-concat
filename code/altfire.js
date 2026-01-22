@@ -9,15 +9,17 @@ let pvp_flag = false;
 
 const farming_locations = {
     "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}, 
-    "franky": {x: 15, y: 38, map: "level2w"}
+    "franky": {x: 15, y: 38, map: "level2w"},
+    "spider": "spider"
 }
 const hunting_lists = {
     "main_three_farm": ["spider", "bigbird", "scorpion"],	
 	"franky": ["franky", "nerfedmummy"],
-    "goo_brawl": ["bgoo", "rgoo"]
+    "goo_brawl": ["bgoo", "rgoo"],
+    "spider": ["spider"]
 }
 
-let farming_key = "main_three_farm";
+let farming_key = "spider";
 const farming_location = farming_locations[farming_key];
 let farming_targets = hunting_lists[farming_key];
 

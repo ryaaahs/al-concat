@@ -7,13 +7,18 @@ const party_target = ["altfire", "ryaaahs", "merchire"];
 let is_attacking = true;
 
 const farming_locations = {
-    "main_three_farm": {x: 1312.20, y: -99.96, map: "main"}
+    "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}, 
+    "franky": {x: 15, y: 38, map: "level2w"},
+    "spider": {x: 945, y: -175, map: "main"},
 }
 const hunting_lists = {
-    "main_three_farm": ["spider", "bigbird", "scorpion"]
+    "main_three_farm": ["spider", "bigbird", "scorpion"],	
+	"franky": ["franky", "nerfedmummy"],
+    "goo_brawl": ["bgoo", "rgoo"],
+    "spider": ["spider"]
 }
 
-let farming_key = "main_three_farm";
+let farming_key = "spider";
 const farming_location = farming_locations[farming_key];
 let farming_targets = hunting_lists[farming_key];
 
