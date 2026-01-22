@@ -60,6 +60,7 @@ let potion_request_awknowledgement = [];
 let merch_state_machine = "boot"
 let merch_state_machine_prev = ""
 let merch_queue = [merch_state_machine]
+let heartbeat_check = null;
 let bot_target = {
     "x": 0,
     "y": 0,
@@ -226,8 +227,7 @@ let core_merch = setInterval(async () => {
             // }
 
             if (merch_queue.length > 0) {
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = merch_queue[0];
+                change_state(merch_queue[0])
             } else {
                 if (character.map !== "main" || (character.x != upgrade_location.x && character.y != upgrade_location.y)) {
                     merch_queue.push("outpost")
@@ -236,8 +236,7 @@ let core_merch = setInterval(async () => {
 
         break; 
         case "outpost":
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "move_outpost"
+            change_state("move_outpost");
 
             await smart_move(upgrade_location);
             await sell_inventory()
@@ -260,15 +259,13 @@ let core_merch = setInterval(async () => {
 
             merch_queue.splice(0, 1);
 
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "idle"
+            change_state("idle");
         break
         case "boot":
         case "loot": 
             use_skill("mluck", character);
 
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "move_loot"
+            change_state("move_loot");
             loot_bots();
 
         break;
@@ -281,23 +278,21 @@ let core_merch = setInterval(async () => {
         case "exchange_armor_box":
         case "exchange_weapon_box":
         case "exchange_candy0":
-        case "exchange_candy1":
-            merch_state_machine_prev = merch_state_machine;
-        
+        case "exchange_candy1":        
             if (merch_state_machine === "exchange_mistletoe") {
                 
-                merch_state_machine = "move_mistletoe";
+                change_state("move_mistletoe");
                 await smart_move(xyn_location);
                 await item_exchange("mistletoe");
                
             } else if (merch_state_machine === "exchange_ornament") {
 
-                merch_state_machine = "move_ornament";
+                change_state("move_ornament");
                 await smart_move(xyn_location);
                 await item_exchange("ornament");
             } else if (merch_state_machine === "exchange_candycane") {
 
-                merch_state_machine = "move_candycane";
+                change_state("move_candycane");
                 await smart_move(xyn_location);
                 await item_exchange("candycane");
             } else if (merch_state_machine === "exchange_xbox" ||
@@ -308,8 +303,8 @@ let core_merch = setInterval(async () => {
                 merch_state_machine === "exchange_candy1"
             ) {
 
-                merch_state_machine = "move_" + merch_state_machine;
-
+                change_state("move_" + merch_state_machine);
+                
                 if (character.real_x !== xyn_location.x && character.real_y !== xyn_location.y) await smart_move(xyn_location);
                 
                 if (merch_state_machine === "move_exchange_xbox") await item_exchange("xbox");
@@ -320,7 +315,7 @@ let core_merch = setInterval(async () => {
                 else if (merch_state_machine === "move_exchange_candy1") await item_exchange("candy1");
             } else if (merch_state_machine === "exchange_seashell") {
 
-                merch_state_machine = "move_seashell";
+                change_state("move_seashell");
                 await smart_move(shell_location);
                 await item_exchange("seashell");
             }
@@ -347,20 +342,15 @@ let core_merch = setInterval(async () => {
 
                 merch_queue.splice(0, 1);
 
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = "idle"
+                change_state("idle");
             } else {
                 merch_queue.splice(0, 1);
-
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = "idle"
-
+                change_state("move_seashell");
             }   
         break;
         case "move_upgrade":
             if (character.x == upgrade_location.x && character.y == upgrade_location.y) {
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = "upgrade"
+                change_state("upgrade");
                 
                 upgrade_cycle_upgrade()
                 upgrade_cycle_compound()
@@ -392,8 +382,7 @@ let core_merch = setInterval(async () => {
 
                 merch_queue.splice(0, 1);
 
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = "idle"
+                change_state("idle");
 
                 setTimeout(() => {
                     merch_queue.push("loot");
@@ -406,8 +395,7 @@ let core_merch = setInterval(async () => {
             if (!smart.moving) {
                 await smart_move(upgrade_location)
 
-                merch_state_machine_prev = merch_state_machine;
-                merch_state_machine = "move_pot"
+                change_state("move_pot");
 
                 let mp_index = locate_item(mp_pot_name);
                 let hp_index = locate_item(hp_pot_name);
@@ -442,8 +430,7 @@ let core_merch = setInterval(async () => {
             touch_christmas_tree();
         break;
         case "craft": 
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "crafting"
+            change_state("crafting");
 
             for (const craftable in crafting_items) {
                 if (used_slots_length() == character.items.length) {
@@ -462,8 +449,7 @@ let core_merch = setInterval(async () => {
             }
             merch_queue.splice(0, 1);
 
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "idle"
+            change_state("idle");
         break;
     }
 }, 1000 * 3)
@@ -473,8 +459,7 @@ async function touch_christmas_tree() {
         send_cm(party_target, ({message: "touch_christmas_tree"}));
     }, 1000 * 30); 
     
-    merch_state_machine_prev = merch_state_machine;
-    merch_state_machine = "moving_to_touch_tree"
+    change_state("moving_to_touch_tree");
     game_log(`Moving to tree`);
     await smart_move(({ x: 48, y: -62, map: "main" }));
 	parent.socket.emit("interaction", {type:"newyear_tree"});
@@ -483,10 +468,8 @@ async function touch_christmas_tree() {
 
     merch_queue.splice(0, 1);
 
-    merch_state_machine_prev = merch_state_machine;
-    merch_state_machine = "idle"
+    change_state("idle");
 }
-
 /// Exchange States
 //------------------------------------------------------
 async function candy_exchange() {
@@ -810,8 +793,7 @@ async function access_bank() {
 async function provide_pots(index) {
     let dist = distance(character, bot_target);
     if (dist < 100) {
-        merch_state_machine_prev = merch_state_machine;
-        merch_state_machine = "pot_bot"
+        change_state("pot_bot");
 
         let hp_index = locate_item(hp_pot_name);
         let mp_index = locate_item(mp_pot_name);
@@ -830,8 +812,7 @@ async function provide_pots(index) {
             
             clearInterval(potion_interval)
            
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "idle"
+            change_state("idle");
 
             potion_request_awknowledgement = [];
             merch_queue.splice(0, 1) 
@@ -855,8 +836,7 @@ async function provide_pots(index) {
 //------------------------------------------------------
 async function loot_bots(index = 0) {
     if (character.esize <= 0) {
-        merch_state_machine_prev = merch_state_machine;
-        merch_state_machine = "move_upgrade"
+        change_state("move_upgrade");
 
         await smart_move(upgrade_location);
         return;
@@ -871,8 +851,7 @@ async function check_if_loot(index) {
     let dist = distance(character, bot_target);
 
     if (dist < 100) {
-        merch_state_machine_prev = merch_state_machine;
-        merch_state_machine = "loot_bot"
+        change_state("loot_bot");
 
         use_skill("mluck", get_entity(party_target[index])); 
 
@@ -881,8 +860,7 @@ async function check_if_loot(index) {
         if (index == party_target.length - 1 && !smart.moving) {
             clearInterval(loot_interval)
 
-            merch_state_machine_prev = merch_state_machine;
-            merch_state_machine = "move_upgrade"
+            change_state("move_upgrade");
 
             await smart_move(upgrade_location);
 
@@ -894,6 +872,18 @@ async function check_if_loot(index) {
         if (!is_waiting_for_location) {
             is_waiting_for_location = true
             send_cm(party_target[index], ({message: "location"}))
+        } else {
+            // We might be hunged due to us not getting a response from our toons
+            // This can be due to disconnects and the merchant logs in first.
+            if (heartbeat_check === null) {
+                heartbeat_check = setTimeout(() => {
+                    if (merch_state_machine === "move_loot") {
+                        is_waiting_for_location = false;
+                        heartbeat_check = null;
+                    }
+                }, (1000 * 60) * 5);
+            }
+            
         }
     }
 }
@@ -937,7 +927,7 @@ async function upgrade_cycle_upgrade() {
 }
 
 async function upgrade_list() {
-    if (merch_state_machine !== "list_upgrade") merch_state_machine = "list_upgrade"
+    if (merch_state_machine !== "list_upgrade") change_state("list_upgrade");
     else return;
 
     for (let index = 0; index < list_upgrade.length; index++) {
@@ -1248,6 +1238,12 @@ function secondhands_handler(event) {
             //trade_buy("secondhands", index, 1);
         }
     }
+}
+
+function change_state(new_state) {
+    merch_state_machine_prev = merch_state_machine;
+    merch_state_machine = new_state;
+    heartbeat_check = null;
 }
 
 function check_for_mp() {
