@@ -344,8 +344,11 @@ let core_merch = setInterval(async () => {
 
                 change_state("idle");
             } else {
+                // Move back to original location
+                await smart_move(upgrade_location);
+
                 merch_queue.splice(0, 1);
-                change_state("move_seashell");
+                change_state("idle");
             }   
         break;
         case "move_upgrade":

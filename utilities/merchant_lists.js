@@ -12,16 +12,16 @@ const bank_whitelist_items = [
     //"feather0"
 
     // Exchangables
-    //"gem0",
-    // "candy0",
-    // "candy1",
-    // "seashell",
+    "gem0",
+    //"candy0",
+    //"candy1",
+    //"seashell",
     //"ornament",
     //"mistletoe",
     //"candycane",
-    // "armorbox",
-    // "weaponbox",
-    // "xbox"
+    //"armorbox",
+    //"weaponbox",
+    //"xbox"
 ]
 
 const crafting_items = {
