@@ -363,7 +363,7 @@ const whitelist_items = [
   "xshield",
   "mshield",
   "exoarm",
-  //"lantern",
+  "lantern",
   //"sshield",
   //"wshield",
   //"wbook0",

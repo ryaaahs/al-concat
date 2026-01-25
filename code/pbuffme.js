@@ -52,7 +52,8 @@ let whitelist_items = [
     "luckbooster",
     "jacko",
     "rabbitsfoot",
-	"ornamentstaff"
+	"ornamentstaff",
+    "handofmidas"
     // "wattire",
     // "wgloves",
     // "wbreeches",
@@ -82,9 +83,31 @@ setInterval(function () {
 }, RESPAWN_INTERVAL);
 
 // Loot
-setInterval(function () {
-    loot();
-}, 100);
+setTimeout(loot_chests, 1000);
+async function loot_chests() {
+    if (Object.keys(get_chests()).length > 20) {
+        let main_glove = character.slots?.gloves.name;
+        let gold_glove = "handofmidas";
+        let glove_index = locate_item(gold_glove);
+        let chests_ids = Object.keys(get_chests());
+
+        await unequip("gloves");
+        await equip(glove_index, "gloves")
+
+        for (const id in chests_ids) {
+            loot(chests_ids[id]);
+        }
+
+        glove_index = locate_item(main_glove);
+
+        await unequip("gloves");
+        await equip(glove_index, "gloves");
+        
+        setTimeout(loot_chests, 1000);
+    } else {
+        setTimeout(loot_chests, 1000);
+    }
+}
 
 // Update entity list to remove ghost mobs
 setInterval(() => parent.socket.emit("send_updates", {}), 1000 * 30); 
