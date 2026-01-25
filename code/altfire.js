@@ -39,7 +39,6 @@ async function check_farm() {
     (character.real_x != farming_locations[farming_key].x || character.real_y != farming_locations[farming_key].y))) {
         if (tank) {
             is_waiting_for_tank = true;
-            skill_lock = true
         }
         await smart_move(farming_location);
     }
@@ -74,9 +73,9 @@ const whitelist_items = [
 const RESPAWN_INTERVAL = 15 * 100; 
 setInterval(function () { 
     if (character.rip) { 
-        respawn(); 
-        smart_move(farming_location);
-        waiting_for_tank = true; 
+        if (respawn()) {
+            check_farm();
+        } 
     } 
 }, RESPAWN_INTERVAL);
 

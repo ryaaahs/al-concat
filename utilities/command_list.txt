@@ -21,6 +21,11 @@ await smart_move(upgrade_location)
 upgrade_cycle_compound()
 upgrade_cycle_upgrade()
 
+// sockets
+
+// Self kill (Test respawn code)
+parent.socket.emit("harakiri");
+
 // Compare apierce
 Change target armor
 show_json(character.attack * damage_multiplier(targetArmor - character.apiercing) * (1 + (character.crit/100) * (character.critdamage/100)) * character.frequency);

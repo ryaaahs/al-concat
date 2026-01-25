@@ -79,7 +79,11 @@ async function side_movement() {
 
 const RESPAWN_INTERVAL = 15 * 100; 
 setInterval(function () { 
-    if (character.rip) { respawn(); smart_move(farming_location); } 
+    if (character.rip) { 
+        if (respawn()) {
+            check_farm();
+        } 
+    } 
 }, RESPAWN_INTERVAL);
 
 // Loot

@@ -58,11 +58,9 @@ add_top_button("real_y", "real_y: " + character.real_y.toFixed(2));
 async function check_farm() {
     if (!pvp_flag && (character.map != farming_locations[farming_key].map || 
     (character.real_x != farming_locations[farming_key].x || character.real_y != farming_locations[farming_key].y))) {
-        if (tank) {
-            is_waiting_for_tank = true;
-            skill_lock = true
-        }
+        skill_lock = true;
         await smart_move(farming_location);
+        skill_lock = false;
     }
 }
 check_farm()
@@ -118,9 +116,9 @@ weapon_swap();
 const RESPAWN_INTERVAL = 15 * 100; 
 setInterval(function () { 
     if (character.rip) { 
-        respawn(); 
-        // TODO: This seems to be spammed and the warrior can still call agitate
-        check_farm();
+        if (respawn()) {
+            check_farm();
+        } 
     } 
 }, RESPAWN_INTERVAL);
 
