@@ -50,15 +50,18 @@ let whitelist_items = [
     "mpot1",
     "elixirluck",
     "luckbooster",
+    "xpbooster",
+    "goldbooster",
     "jacko",
     "rabbitsfoot",
 	"ornamentstaff",
-    "handofmidas"
+    "handofmidas",
     // "wattire",
     // "wgloves",
     // "wbreeches",
     // "wcap",
-    // "wshoes"
+    // "wshoes",
+    "xgloves"
 ]
 
 // Intervals ------------------------------------------------------------------ 
@@ -90,10 +93,13 @@ setInterval(function () {
 setTimeout(loot_chests, 1000);
 async function loot_chests() {
     if (Object.keys(get_chests()).length > 20) {
-        let main_glove = character.slots?.gloves.name;
+        let main_glove = character.slots?.gloves?.name;
         let gold_glove = "handofmidas";
         let glove_index = locate_item(gold_glove);
+        let booster_index = locate_item("luckbooster");
         let chests_ids = Object.keys(get_chests());
+
+        shift(booster_index, "goldbooster")
 
         await unequip("gloves");
         await equip(glove_index, "gloves")
@@ -106,6 +112,7 @@ async function loot_chests() {
 
         await unequip("gloves");
         await equip(glove_index, "gloves");
+        shift(booster_index, "luckbooster")
         
         setTimeout(loot_chests, 1000);
     } else {
