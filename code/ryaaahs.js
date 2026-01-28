@@ -23,7 +23,7 @@ const hunting_lists = {
     "main_three_farm": ["spider", "bigbird", "scorpion"],	
 	"franky": ["franky", "nerfedmummy"],
     "goo_brawl": ["bgoo", "rgoo"],
-    "spider": ["spider"]
+    "spider": ["spider", "phoenix"]
 }
 
 let farming_key = "spider";
