@@ -82,6 +82,7 @@ const upgrade_items = [
 
     // Gloves
     //"supermittens",
+    "wgloves",
 
     // Cape
     "angelwings",
@@ -233,7 +234,7 @@ const whitelist_items = [
   "mcpants",
   "starkillers",
   //"hpants",
-  //"frankypants",
+  "frankypants",
   "xpants",
 
   // Shoes
@@ -259,7 +260,7 @@ const whitelist_items = [
   //"gloves",
   "vgloves",
   "fierygloves",
-  //"wgloves",
+  "wgloves",
   //"mittens",
   "supermittens",
   "powerglove",
@@ -421,7 +422,7 @@ const whitelist_items = [
   "strbelt",
   "mbelt",
   "sbelt",
-  //"santasbelt",
+  "santasbelt",
   "dexbelt",
   "intbelt",
   
@@ -551,7 +552,7 @@ const whitelist_items = [
   //"brownegg",
   //"whiteegg",
   //"gslime",
-  "crabclaw",
+  //"crabclaw",
   //"beewings",
   //"pleather",
   //"spores",

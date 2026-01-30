@@ -1252,7 +1252,7 @@ function secondhands_handler(event) {
             break;
         }
         
-        if (whitelist_items.includes(item.name)) {
+        if (whitelist_items.includes(item.name) || item?.p === "shiny") {
             parent.socket.emit("sbuy", { "rid": item.rid });
             break;
             //trade_buy("secondhands", index, 1);
