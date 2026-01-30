@@ -133,28 +133,29 @@ async function attack_target(targets) {
     
     change_target(targets[0]);
 
-    for (const mob of targets) {
-        draw_circle(mob.x, mob.y, mob.range, 3, 0xE8FF00);
-    }
+    // for (const mob of targets) {
+    //     draw_circle(mob.x, mob.y, mob.range, 3, 0xE8FF00);
+    // }
     
     try {
         if (character.hp <= character.max_hp - character.heal + 750) {
-            if (!is_on_cooldown("heal")) {
+            if (!is_on_cooldown("attack") && character.mp > character.mp_cost) {
                 heal(character);
             }
         } else if (targets.length >= 1 && is_in_range(targets[0], "attack")) {
-            draw_circle(targets[0].x, targets[0].y, 20, 3, 0xE8FF00); // ranger path
+            //draw_circle(targets[0].x, targets[0].y, 20, 3, 0xE8FF00); // ranger path
 
-            if (can_attack(targets[0])) {
+            if (!is_on_cooldown("attack") && can_attack(targets[0]) && character.mp > character.mp_cost && get_entity(targets[0].id)) {
                 game_log(`Single Shot`, "#FFA600");
                 await attack(targets[0])
+                reduce_cooldown("attack", Math.min(...parent.pings))
             }
         }  
     } catch(e) {
         console.error(e);
     }
 
-    setTimeout(attack_target, Math.max(100, parent.next_skill["attack"].getTime() - Date.now()), get_mob_targets());
+    setTimeout(() => attack_target(get_mob_targets()), Math.max(100, parent.next_skill["attack"].getTime() - Date.now()));
 }
 attack_target(get_mob_targets()); 
 
@@ -204,16 +205,23 @@ async function handle_elixir() {
 setInterval(handle_elixir, (1000 * 60) * 5);
 
 // Skills handling
-async function handleAbsorb() {
+async function handle_absorb() {
     try {
         // Absorb only works if you're in a party and the skill isn't on cooldown
-        if (!character.party || is_on_cooldown("absorb")) return;
+        if (party_owner == "") return;
+
+        if (!character.party || is_on_cooldown("absorb")){
+            setTimeout(handle_absorb, Math.max(100, parent.next_skill["absorb"].getTime() - Date.now()));
+            return;
+        } 
 
         // Get names of all party members except yourself
         const allies = Object.keys(get_party()).filter(name => name !== character.name);
         //if (parent.S?.grinch?.live) allies.push("earthPri");
-        if (!allies.length) return; // No one to protect
-
+        if (!allies.length) {
+            setTimeout(handle_absorb, Math.max(100, parent.next_skill["absorb"].getTime() - Date.now()));
+            return; // No one to protect
+        }
         // Find a monster targeting one of your allies
         const badMob = Object.values(parent.entities).find(mob =>
             mob.type === "monster" &&
@@ -222,23 +230,38 @@ async function handleAbsorb() {
         );
 
         // If no valid badMob found, stop
-        if (!badMob) return;
-
+        if (!badMob) {
+            setTimeout(handle_absorb, Math.max(100, parent.next_skill["absorb"].getTime() - Date.now()));
+            return;
+        }
         // Use absorb on the ally being targeted
         const ally = get_player(badMob.target);
         if (!ally || !is_in_range(ally, "absorb")) return;
 
-        await use_skill("absorb", ally);
-        game_log(`Absorbing ${badMob.target}`, "#FFA600");
+        if (!is_on_cooldown("absorb") && character.mp > G.skills["absorb"].mp && is_in_range(ally, "absorb")) {
+            await use_skill("absorb", ally);
+            game_log(`Absorbing ${badMob.target}`, "#FFA600");
+        }
+
     } catch (e) {
         console.log("Absorb error: ", e);
     }
-}
-setInterval(handleAbsorb, 100);
+
+    if (parent.next_skill["absorb"]) {
+        setTimeout(handle_absorb, Math.max(100, parent.next_skill["absorb"].getTime() - Date.now()));
+    } else {
+        setTimeout(handle_absorb, 100);
+    }
+    
+} 
+handle_absorb();
 
 async function handle_curse() {
     try {
-        if (is_on_cooldown("curse")) return;
+        if (is_on_cooldown("curse")) {
+            setTimeout(handle_curse, Math.max(100, parent.next_skill["curse"].getTime() - Date.now()));
+            return;
+        }   
 
         // Get all mobs
         let mobs = Object.values(parent.entities).filter(mob =>
@@ -246,18 +269,27 @@ async function handle_curse() {
             mob.target
         );
 
+        if (mobs.length === 0) {
+            setTimeout(handle_curse, Math.max(100, parent.next_skill["curse"].getTime() - Date.now()));
+            return // No mobs
+        } 
+
         // Sort the mobs by hp
         mobs = mobs.sort((a, b) => {
             return a.hp > b.hp;
         }).reverse();
 
-        await use_skill("curse", mobs[0]);
-        game_log(`Cursing ${mobs[0].name}`, "#FFA600");
+        if (!is_on_cooldown("curse") && character.mp > G.skills["curse"].mp && get_entity(mobs[0].id) && is_in_range(mobs[0], "curse")) {
+            await use_skill("curse", mobs[0]);
+            game_log(`Cursing ${mobs[0].name}`, "#FFA600");
+        }
     }  catch (e) {
-        console.log("Absorb error: ", e);
+        console.log("Curse error: ", e);
     }
-}
-setInterval(handle_curse, 100);
+    
+    setTimeout(handle_curse, Math.max(100, parent.next_skill["curse"].getTime() - Date.now()));
+} 
+handle_curse()
 
 async function handle_scare() {
     try {
@@ -304,8 +336,14 @@ async function check_for_party_hp() {
     // check for allies hp
     // if hp < 60, spam heal till > 90% then stop
     if (character.hp < (character.max_hp * 0.2)) {
-        
-        while (true) {
+        let party_heal_levels = G.skills["partyheal"].levels
+        let times_to_heal = Math.floor((party_member.max_hp - party_member.hp) / [...party_heal_levels].reverse().find(([level]) => level <= character.level)[1]);
+
+        while (times_to_heal) {
+            if (character.mp < G.skills["partyheal"].mp) {
+                break;
+            }
+
             if (!is_on_cooldown("partyheal")) {
                 await use_skill("partyheal");
             }
@@ -324,8 +362,15 @@ async function check_for_party_hp() {
             }
         }
 
-        if (party_member.hp < (party_member.max_hp * 0.4)) {
-            while (true) {
+        if (!party_member.rip && party_member.hp < (party_member.max_hp * 0.4)) {
+            let party_heal_levels = G.skills["partyheal"].levels
+            let times_to_heal = Math.floor((party_member.max_hp - party_member.hp) / [...party_heal_levels].reverse().find(([level]) => level <= character.level)[1]);
+
+            while (times_to_heal) {
+                if (character.mp < G.skills["partyheal"].mp) {
+                    break;
+                }
+                
                 if (!is_on_cooldown("partyheal")) {
                     await use_skill("partyheal");
                 }

@@ -101,30 +101,30 @@ async function attack_target(targets) {
     }
    
     try {
-        if ((targets.length >= 2 && targets.every((m) => is_in_range(m, "attack"))) && character.mp >= G.skills["3shot"].mp) {
+        if ((targets.length >= 2 && targets.every((m) => is_in_range(m, "attack"))) && character.mp > G.skills["3shot"].mp) {
             for (const mob of targets) {
                 draw_circle(mob.x, mob.y, 20, 3, 0xE8FF00); // ranger path  
-                
             }
 
-            if (!is_on_cooldown("3shot")) {
+            if (!is_on_cooldown("3shot") && targets.every((target) => get_entity(target.id))) {
                 game_log(`Three Shot`, "#FFA600");
                 await use_skill("3shot", targets)
             }
 
-        } else if (targets.length >= 1 && is_in_range(targets[0], "attack")) {
+        } else if (targets.length >= 1 && is_in_range(targets[0], "attack") && character.mp > character.mp_cost) {
             draw_circle(targets[0].x, targets[0].y, 20, 3, 0xE8FF00); // ranger path
 
-            if (can_attack(targets[0])) {
+            if (can_attack(targets[0]) && !is_on_cooldown("attack") && get_entity(targets[0].id)) {
                 game_log(`Single Shot`, "#FFA600");
                 await attack(targets[0])
+                reduce_cooldown("attack", Math.min(...parent.pings))
             }
         }  
     } catch(e) {
         console.error(e);
     }
 
-    setTimeout(attack_target, Math.max(100, parent.next_skill["attack"].getTime() - Date.now()), get_mob_targets());
+    setTimeout(() => attack_target(get_mob_targets()), Math.max(100, parent.next_skill["attack"].getTime() - Date.now()));
 }
 attack_target(get_mob_targets()); 
 
@@ -156,7 +156,10 @@ setInterval(() => parent.socket.emit("send_updates", {}), 1000 * 30);
 // Skills handling
 async function handle_huntersmark() {
     try {
-        if (is_on_cooldown("huntersmark")) return;
+        if (is_on_cooldown("huntersmark")) {
+            setTimeout(handle_huntersmark, Math.max(100, parent.next_skill["huntersmark"].getTime() - Date.now()));
+            return
+        }
 
         // Get all mobs
         let mobs = Object.values(parent.entities).filter(mob =>
@@ -166,20 +169,27 @@ async function handle_huntersmark() {
             mob.s?.cursed
         );
 
-        if (mobs.length === 0) return;
+        if (mobs.length === 0) {
+            setTimeout(handle_huntersmark, Math.max(100, parent.next_skill["huntersmark"].getTime() - Date.now()));
+            return 
+        }
 
         // Sort the mobs by hp
         mobs = mobs.sort((a, b) => {
             return a.hp > b.hp;
         })
 
-        await use_skill("huntersmark", mobs[0]);
-        game_log(`Hunters Mark ${mobs[0]?.name}`, "#FFA600");
+        if (!is_on_cooldown("huntersmark") && character.mp > G.skills["huntersmark"].mp && get_entity(mobs[0].id) && is_in_range(mobs[0], "huntersmark")) {
+            await use_skill("huntersmark", mobs[0]);
+            game_log(`Hunters Mark ${mobs[0]?.name}`, "#FFA600");
+        }
     }  catch (e) {
         console.log("Hunters Mark error: ", e);
     }
-}
-setInterval(handle_huntersmark, 100);
+    
+    setTimeout(handle_huntersmark, Math.max(100, parent.next_skill["huntersmark"].getTime() - Date.now()));
+} 
+handle_huntersmark();
 
 async function handle_elixir() {
     try {

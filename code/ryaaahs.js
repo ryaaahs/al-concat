@@ -14,6 +14,8 @@ let pvp_flag = false;
 let mainhand = "";
 let offhand = "";
 
+// TODO: fix farming locations for check_farm
+// Either use objects or find a method using the string
 const farming_locations = {
     "main_three_farm": {x: 1293.65, y: -66.00, map: "main"}, 
     "franky": {x: 15, y: 38, map: "level2w"},
@@ -61,6 +63,7 @@ add_top_button("real_y", "real_y: " + character.real_y.toFixed(2));
 async function check_farm() {
     if (!pvp_flag && (character.map != farming_locations[farming_key].map || 
     (character.real_x != farming_locations[farming_key].x || character.real_y != farming_locations[farming_key].y))) {
+        console.log()
         skill_lock = true;
         await smart_move(farming_location);
         skill_lock = false;
@@ -155,7 +158,7 @@ async function attack_target(targets) {
     }
     
     try {
-        if (targets.length >= 1 && is_in_range(targets[0], "attack")) {
+        if (targets.length >= 1 && is_in_range(targets[0], "attack") && character.mp > character.mp_cost) {
             if (can_attack(targets[0])) {
                 await attack(targets[0])
                 // `reduce_cooldown` is used to compensate for ping between the client and server. Utilizing it increases DPS.
@@ -167,7 +170,7 @@ async function attack_target(targets) {
         console.error(e);
     }
        
-    setTimeout(attack_target, Math.max(100, parent.next_skill["attack"].getTime() - Date.now()), get_mob_targets());
+    setTimeout(() => attack_target(get_mob_targets()), Math.max(100, parent.next_skill["attack"].getTime() - Date.now()));
 }
 attack_target(get_mob_targets()); 
 
@@ -296,18 +299,29 @@ async function handle_cleave() {
 }
 //setInterval(handle_cleave, 100);
 
-async function handle_agitate() {
-    if (skill_lock || pvp_flag || character.party === null) return;
+async function handle_agitate() {    
+    if (pvp_flag) return;
+
+    if (skill_lock || character.party === null) {
+        setTimeout(handle_agitate, 4000);
+        return;
+    }
+
+    if (is_on_cooldown("agitate")) {
+        setTimeout(handle_agitate, 4000);
+        return; 
+    }
 
     try {
-        if (!is_on_cooldown("agitate")) {
+        if (!is_on_cooldown("agitate") && character.mp > G.skills["agitate"].mp ) {
             await use_skill("agitate");
         } 
     }  catch (e) {
         console.log("Agitate error: ", e);
     }
-}
-setInterval(handle_agitate, 1000 * 5);
+    setTimeout(handle_agitate, 4000);
+} 
+handle_agitate();
 
 // ------------------------------------------------------------------
 
